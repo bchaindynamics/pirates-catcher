@@ -8,6 +8,7 @@ import Header from './components/header.js';
 import Features from './components/features';
 import About from './components/about';
 import Video from './components/Video';
+import Director from './components/DirectorDashBoard/DirectorDashBoard';
 import Home from './Home';
 //import Services from './components/services';
 //import Gallery from './components/gallery';
@@ -17,7 +18,6 @@ import Contact from './components/contact';
 import JsonData from './data/data.json';
 //import Identicon from 'identicon.js';
 import Web3 from 'web3';
-import Home2 from './Home2';
 import { BrowserRouter as Router ,Switch,Route} from 'react-router-dom';
 import Routes from './Routes';
 import './App.css';
@@ -105,6 +105,7 @@ class App extends Component {
         <Switch>
         <Route path="/" exact component={Home}></Route>
         <Route path="/Video" component={Video}></Route>
+        <Route path="/Director" component={Director}></Route>
         </Switch>
         </div>
         </Router>

@@ -1,36 +1,29 @@
 import React, { Component } from "react";
-import '../App.css';
-import history from '../history';
+import '../../App.css';
+import './Director.css';
+//import history from '../history';
 import {Link} from 'react-router-dom';
 export class Header extends Component {
   render() {
     return (
       <header id="header">
-        <div className="intro">
+        <div className="intro2">
           <div className="overlay2">
             <div className="container">
               <div className="row">
                 <div className="col-md-8 col-md-offset-2 intro-text">
                   <h1>
-                    {this.props.data ? this.props.data.title : "Loading"}
+                    {this.props.title ? this.props.title : "Loading"}
                     <span></span>
                   </h1>
-                  <p>
-                    {this.props.data ? this.props.data.paragraph : "Loading"}
-                  </p>
+                  
                   <form>
                     
                   <button
                     onClick={() => window.open('/Video')}
                     className="btn btn-custom btn-lg page-scroll"
                   >
-                    Start Playing
-                  </button>{" "}
-                  <button
-                    onClick={() => window.open('/Director')}
-                    className="btn btn-custom btn-lg page-scroll"
-                  >
-                    Director Login
+                    New Movie Registration
                   </button>{" "}
                   
                   

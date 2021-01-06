@@ -1,22 +1,34 @@
+
+
+import PiratesCatcher from '../../abis/PiratesCatcher.json';
 import React, { Component } from 'react';
-//import Identicon from 'identicon.js';
-import './Video.css';
-import PiratesCatcher from '../abis/PiratesCatcher.json';
+import Navigation from './navigation';
+import Header from './header.js';
+import Features from './features';
+
+
 import Web3 from 'web3';
-class Video extends Component {
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import '../../App';
+class DirectorDashBoard extends Component {
+
   constructor(props) {
     super(props)
     this.state = {
       account: '',
-      landingPageData: {}
+      yourmovies:[{"title":"ABCD","icon":"abcd"}],
+      
     }
 
     
   }
+ 
   async componentDidMount()
   {
     await this.loadWeb3();
     await this.loadBlockchainData();
+    
   }
   async loadWeb3()
   {
@@ -62,34 +74,68 @@ class Video extends Component {
     console.log(accounts);
    // 
    const networkId=await web3.eth.net.getId();
+   console.log(networkId);
     const networkdata=PiratesCatcher.networks[networkId];
+    console.log(networkdata);
     if(networkdata)
     {
       const piratescatcher=new web3.eth.Contract(PiratesCatcher.abi,networkdata.address);
       console.log(piratescatcher);
+      var counter=await piratescatcher.methods.counter().call();
+      console.log("cc",counter);
+      var movie=await piratescatcher.methods.getmovie(counter).call();
+      console.log(movie);
+      //var checkreporters=await piratescatcher.methods.getReporters(counter).call();
+      //console.log(checkreporters);
+      var array =[];
+      for(var i=1;i<=counter;i++)
+      {
+        console.log("i=",i);
+        var movie=await piratescatcher.methods.getmovie(i).call();
+        //movie.directoraddress=this.state.account;
+        if(movie.directoraddress==this.state.account)
+        {
+            var movieobj=new Object();
+            movieobj.title=movie.name;
+            movieobj.icon=movie.shoothases;
+            array.push(movieobj);
 
+            //reporters
+          /* var checkreporters=await piratescatcher.methods.getReporters(i).call();
+           console.log(checkreporters);
+           if(checkreporters.length!=0)
+           {
+
+           }*/
+        }
+        //console.log(movie);
+      }
+      this.setState({yourmovies:array});
+      //console.log(array);
     }
     
     
   }
   
- 
-
 
   render() {
     return (
-      <div className="container-fluid mt-5">
-           <center>
-<header>
-    <video src="https://siasky.net/CABOBRhoBIlfrph4sQtAl20OJJRIg4DyfrJ4qgVcPsog0Q" controls controlsList="nodownload"></video>
-    <div class="overlay">
-        <h1 id='abcd'>{this.state.account}</h1>
-    </div>
-</header>
-</center>
+     
+      <div>
+        
+        
+        <Navigation account ={this.state.account}/>
+        <Header title="Welcome" paragraph={this.state.account}/>
+        <Features data={this.state.yourmovies} />
+        
+        
+        
       </div>
+     
+      
+        
     );
   }
 }
 
-export default Video;
+export default DirectorDashBoard;

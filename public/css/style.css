@@ -193,7 +193,7 @@ a:focus, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:acti
 	background-size: cover;
 	-o-background-size: cover;
 }
-.intro .overlay {
+.intro .overlay2 {
 	background: rgba(0,0,0,0.2);
 }
 .intro h1 {
