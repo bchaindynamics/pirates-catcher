@@ -10,6 +10,9 @@ import About from './components/about';
 import Video from './components/Video';
 import Director from './components/DirectorDashBoard/DirectorDashBoard';
 import Home from './Home';
+import RegistrationForm from './components/MovieRegistration/RegistrationForm';
+import IdeationForm from './components/Ideation/IdeationForm';
+import PreproductionForm from './components/Preproduction/PreproductionForm';
 //import Services from './components/services';
 //import Gallery from './components/gallery';
 //import Testimonials from './components/testimonials';
@@ -106,6 +109,9 @@ class App extends Component {
         <Route path="/" exact component={Home}></Route>
         <Route path="/Video" component={Video}></Route>
         <Route path="/Director" component={Director}></Route>
+        <Route path="/Registration" component={RegistrationForm}></Route>
+        <Route path="/Ideation" component={IdeationForm}></Route>
+        <Route path="/Preproduction" component={PreproductionForm}></Route>
         </Switch>
         </div>
         </Router>

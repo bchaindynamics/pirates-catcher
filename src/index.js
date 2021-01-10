@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import Routes from './Routes';
+
+import 'semantic-ui-css/semantic.min.css'
 ReactDOM.render(
   
   <React.StrictMode>
