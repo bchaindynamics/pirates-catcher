@@ -13,6 +13,8 @@ import Home from './Home';
 import RegistrationForm from './components/MovieRegistration/RegistrationForm';
 import IdeationForm from './components/Ideation/IdeationForm';
 import PreproductionForm from './components/Preproduction/PreproductionForm';
+import ProductionForm from './components/Production/ProductionForm';
+import FinalEditing from './components/FinalEditing/Finalediting';
 //import Services from './components/services';
 //import Gallery from './components/gallery';
 //import Testimonials from './components/testimonials';
@@ -112,6 +114,8 @@ class App extends Component {
         <Route path="/Registration" component={RegistrationForm}></Route>
         <Route path="/Ideation" component={IdeationForm}></Route>
         <Route path="/Preproduction" component={PreproductionForm}></Route>
+        <Route path="/Production" component={ProductionForm}></Route>
+        <Route path="/FinalEditing" component={FinalEditing}></Route>
         </Switch>
         </div>
         </Router>

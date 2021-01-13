@@ -23,16 +23,19 @@ import React, {
   //import {
     //DateInput
   //} from 'semantic-ui-calendar-react';
+  //import ipfs from '../ipfs';
+
+  const ipfsClient = require('ipfs-http-client');
+  const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }); // leaving out the arguments will default to these values
   
-  export default class RegistrationForm extends Component {
+  export default class ProductionForm extends Component {
     constructor(props) {
       super(props);
       
       this.state = {
         id:0,
-        cast:'',
-        budget:'',
-        shootlocation:'',
+        buffer:'',
+        ipfshash:'',
         piratescatcher:null
         
       };
@@ -82,7 +85,7 @@ import React, {
       this.setState({account:accounts[0]});
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
-        alert("accoun changed")
+        alert("account changed")
         this.setState({account:accounts[0]});
       }.bind(this));
   
@@ -130,7 +133,7 @@ import React, {
         //alert(this.state.id);
         //alert(this.state.coreidea);
         //alert(this.state.producer);
-        await this.state.piratescatcher.methods.preproduction((this.state.id),(this.state.cast).toString(),(this.state.budget).toString(),(this.state.shootlocation).toString()).send({
+        await this.state.piratescatcher.methods.productionshoot((this.state.id),(this.state.ipfshash).toString()).send({
           from: this.state.account
         });
   
@@ -141,12 +144,10 @@ import React, {
         this.setState({
           loading: false,
           id:0,
-          cast:'',
-          budget:'',
-          shootlocation:''
+          ipfshash:'',buffer:''
         });
   
-        window.open('/Production');
+        window.open('/FinalEditing');
       } catch (err) {
         console.log(err);
         this.setState({
@@ -155,6 +156,57 @@ import React, {
         });
       }
     }
+
+    handleonsubmit=async(event)=>{
+        event.preventDefault();
+        alert("on submit");
+          console.log("handle submit");
+          console.log(this.state.buffer);
+          ipfs.files.add(this.state.buffer,(error,result)=>{
+            if(error)
+            {
+            console.error(error);
+            return 
+            }
+            this.setState({ipfshash:result[0].hash});
+            console.log('ipfshash',this.state.ipfshash);
+          })
+      }
+      captureFile=event=>{
+          alert("hellooooooo");
+        event.preventDefault();
+        const file=event.target.files[0];
+        const reader=new window.FileReader();
+        reader.readAsArrayBuffer(file);
+    
+        reader.onloadend=()=>{
+          this.setState({buffer:Buffer(reader.result)});
+          console.log("buffer",this.state.buffer);
+        }
+      }
+
+      uploadImage=(event)=>{
+        event.preventDefault();
+
+        alert("hellooooooo");
+        console.log("Submitting file to IPFS...");
+
+        console.log(this.state.buffer);
+    
+        ipfs.add(this.state.buffer,(error,result)=>{
+          if(error)
+          {
+              alert("Error in uploading");
+          }
+          else
+          {
+            console.log("ipfs hash",result);
+           
+          }
+        });
+        
+    
+      }
     
     
     handleChange = (event, {
@@ -179,11 +231,11 @@ import React, {
         <
         Segment inverted color = 'black'>
         
-        <h1 > <font color="white">Preproduction Form</font> < /h1> 
+        <h1 > <font color="white">Production Form</font> < /h1> 
         <Segment inverted color = "grey" >
         <
         Message attached header = 'Welcome to PiratesCatcher'
-        content = "Enter your movie's preproduction details"
+        content = "Enter your movie's production details"
         icon = "searchengin"
         color = 'black' /
         >
@@ -216,83 +268,17 @@ import React, {
         
         /> 
         </Form.Field>
-        </Form.Group>
-
-        <br/>
-                <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Cast"
-  
-        fluid ref = {
-          (input) => {
-            this.cast = input;
-          }
-        }
-        //labelPosition=""
-        value = {
-          this.state.cast
-        }
-        onChange = {
-          event => this.setState({
-            cast: event.target.value
-          })
-        }
-        /> 
-        </Form.Field>
-        </Form.Group>
-        <br/>
-        <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Budget"
-        fluid ref = {
-          (input) => {
-            this.budget = input;
-          }
-        }
-        //  labelPosition=""
-        value = {
-          this.state.budget
-        }
-        onChange = {
-          event => this.setState({
-            budget: event.target.value
-          })
-        }
-        /> 
-        </ Form.Field>
-  
-        </Form.Group><br/>
-        <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Shoot Location"
-        fluid ref = {
-          (input) => {
-            this.shootlocation = input;
-          }
-        }
-        //  labelPosition=""
-        value = {
-          this.state.shootlocation
-        }
-        onChange = {
-          event => this.setState({
-            shootlocation: event.target.value
-          })
-        }
-        /> 
-        </ Form.Field>
-  
-        </Form.Group>
+       </Form.Group>
             
         
         <br/>
-  
+        <h2><font color="black">Cover photo:</font></h2>
+        <form>
+       <input type="file" onChange={this.captureFile}/>
+       <br/>
+       <input type="button" name='Upload' value='Upload' className="btn btn-primary" onClick={this.uploadImage}></input>
+       </form>
+       <br/><br/>
         
         
         
@@ -303,7 +289,7 @@ import React, {
           this.state.loading
         }
         disabled = {
-          this.state.id=='' || this.state.cast=='' || this.state.budget=='' || this.state.shootlocation==''
+          this.state.id=='' || this.state.ipfshash==''
         }
         primary onClick = {
           this.handleconf

@@ -23,20 +23,26 @@ import React, {
   //import {
     //DateInput
   //} from 'semantic-ui-calendar-react';
-  
-  export default class RegistrationForm extends Component {
+  const { SkynetClient } = require('@nebulous/skynet');
+
+  //import { SkynetClient } from "skynet-js";
+
+
+
+  export default class FinalEditing extends Component {
     constructor(props) {
       super(props);
       
       this.state = {
         id:0,
-        cast:'',
-        budget:'',
-        shootlocation:'',
+        siahash:'',
+        filename:'',
+        extension:'',
         piratescatcher:null
         
       };
-     
+      this.captureFile = this.captureFile.bind(this);
+      this.getFile = this.getFile.bind(this);
     }
   
     async componentDidMount()
@@ -82,7 +88,7 @@ import React, {
       this.setState({account:accounts[0]});
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
-        alert("accoun changed")
+        alert("account changed");
         this.setState({account:accounts[0]});
       }.bind(this));
   
@@ -105,7 +111,50 @@ import React, {
     
     
     //handleClose = () => this.setState({ modalOpen: false })
-    
+    getFile=(filePath)=> {
+        return filePath.substr(filePath.lastIndexOf('\\') + 1).split('.')[0];
+    }
+   captureFile=(event)=>{
+       
+       const inputfile=document.forms["siaupload"]["inputfile"].value;
+       console.log(inputfile);
+
+       const filename=this.getFile(inputfile.toString());
+       console.log(filename);
+       const extension=inputfile.split('.')[1];
+       console.log(filename);
+       console.log(extension);
+       this.setState({filename:filename});
+       this.setState({extension:extension});
+       console.log(this.state.filename);
+       console.log(this.state.extension);
+   }
+
+   async uploadVideo(event) {
+     event.preventDefault();
+    try {
+
+      // create a client
+      const client = new SkynetClient();
+      // upload
+
+      var file=new File([""],'data.txt');
+      console.log(file);
+      //const skylink = await client.uploadFile(file);
+    //console.log(`Upload successful, skylink: ${skylink}`);
+      const skylink = await client.uploadFile(file);
+      console.log(`Upload successful, skylink: ${skylink}`);
+  
+      // download
+      //await client.downloadFile(skylink);
+      //console.log('Download successful');
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  
+
    
   
    
@@ -130,7 +179,7 @@ import React, {
         //alert(this.state.id);
         //alert(this.state.coreidea);
         //alert(this.state.producer);
-        await this.state.piratescatcher.methods.preproduction((this.state.id),(this.state.cast).toString(),(this.state.budget).toString(),(this.state.shootlocation).toString()).send({
+        await this.state.piratescatcher.methods.finalediting((this.state.id),(this.state.siahash).toString()).send({
           from: this.state.account
         });
   
@@ -140,13 +189,10 @@ import React, {
   
         this.setState({
           loading: false,
-          id:0,
-          cast:'',
-          budget:'',
-          shootlocation:''
+          id:0
         });
   
-        window.open('/Production');
+        window.open('/Done');
       } catch (err) {
         console.log(err);
         this.setState({
@@ -179,11 +225,11 @@ import React, {
         <
         Segment inverted color = 'black'>
         
-        <h1 > <font color="white">Preproduction Form</font> < /h1> 
+        <h1 > <font color="white">Final Editing Form</font> < /h1> 
         <Segment inverted color = "grey" >
         <
         Message attached header = 'Welcome to PiratesCatcher'
-        content = "Enter your movie's preproduction details"
+        content = "Enter your movie's final editing details"
         icon = "searchengin"
         color = 'black' /
         >
@@ -219,76 +265,11 @@ import React, {
         </Form.Group>
 
         <br/>
-                <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Cast"
-  
-        fluid ref = {
-          (input) => {
-            this.cast = input;
-          }
-        }
-        //labelPosition=""
-        value = {
-          this.state.cast
-        }
-        onChange = {
-          event => this.setState({
-            cast: event.target.value
-          })
-        }
-        /> 
-        </Form.Field>
-        </Form.Group>
-        <br/>
-        <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Budget"
-        fluid ref = {
-          (input) => {
-            this.budget = input;
-          }
-        }
-        //  labelPosition=""
-        value = {
-          this.state.budget
-        }
-        onChange = {
-          event => this.setState({
-            budget: event.target.value
-          })
-        }
-        /> 
-        </ Form.Field>
-  
-        </Form.Group><br/>
-        <Form.Group widths='equal'>
-        <
-        Form.Field >
-        <
-        Input label = "Shoot Location"
-        fluid ref = {
-          (input) => {
-            this.shootlocation = input;
-          }
-        }
-        //  labelPosition=""
-        value = {
-          this.state.shootlocation
-        }
-        onChange = {
-          event => this.setState({
-            shootlocation: event.target.value
-          })
-        }
-        /> 
-        </ Form.Field>
-  
-        </Form.Group>
+        <form name="siaupload">
+       <input type="file" name="inputfile" onChange={this.captureFile}/>
+       <br/>
+       <input type="button" name='Upload' value='Upload' className="btn btn-primary" onClick={this.uploadVideo}></input>
+       </form>
             
         
         <br/>
@@ -303,12 +284,12 @@ import React, {
           this.state.loading
         }
         disabled = {
-          this.state.id=='' || this.state.cast=='' || this.state.budget=='' || this.state.shootlocation==''
+          this.state.id=='' || this.state.siahash=='' 
         }
         primary onClick = {
           this.handleconf
         }
-         > Save and Proceed < /Button>
+         > Submit < /Button>
         
         
         </Form> 
