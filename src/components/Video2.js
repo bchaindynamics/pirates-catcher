@@ -1,34 +1,24 @@
-
-
-import PiratesCatcher from '../../abis/PiratesCatcher.json';
 import React, { Component } from 'react';
-import Navigation from './navigation';
-import Header from './header.js';
-import Features from './features';
-
-
+//import Identicon from 'identicon.js';
+//import './Video.css';
+import PiratesCatcher from '../abis/PiratesCatcher.json';
 import Web3 from 'web3';
-import { BrowserRouter as Router } from 'react-router-dom';
-
-import '../../App';
-class DirectorDashBoard extends Component {
-
+import VideoList from './VideoList';
+var CryptoJS = require("crypto-js");
+class Video2 extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       account: '',
-      yourmovies:[]
-      
-    }
+      moviehashes:[]
+    };
 
     
   }
- 
   async componentDidMount()
   {
     await this.loadWeb3();
     await this.loadBlockchainData();
-    
   }
   async loadWeb3()
   {
@@ -74,9 +64,7 @@ class DirectorDashBoard extends Component {
     console.log(accounts);
    // 
    const networkId=await web3.eth.net.getId();
-   console.log(networkId);
     const networkdata=PiratesCatcher.networks[networkId];
-    console.log(networkdata);
     if(networkdata)
     {
       const piratescatcher=new web3.eth.Contract(PiratesCatcher.abi,networkdata.address);
@@ -87,18 +75,25 @@ class DirectorDashBoard extends Component {
       console.log(movie);
       //var checkreporters=await piratescatcher.methods.getReporters(counter).call();
       //console.log(checkreporters);
-      var array =[];
-      for(var i=1;i<=counter;i++)
+      var array = [];
+      for(var i=1;i<counter;i++)
       {
         console.log("i=",i);
         var movie=await piratescatcher.methods.getmovie(i).call();
         //movie.directoraddress=this.state.account;
-        if(movie.directoraddress==this.state.account)
-        {
+        //if(movie.directoraddress==this.state.account)
+        //{
             var movieobj=new Object();
+            var bytes  = CryptoJS.AES.decrypt(movie.siahash, 'secret');
+            var originalsiahash = bytes.toString(CryptoJS.enc.Utf8);
+            movieobj.link=`https://siasky.net/${originalsiahash}`;
             movieobj.title=movie.name;
             movieobj.icon=`https://ipfs.io/ipfs/${movie.shoothashes}`;
+            movieobj.siahash=originalsiahash;
+            //console.log(movieobj.shoothases);
             movieobj.id=movie.id;
+            movieobj.account=this.state.account;
+            
             array.push(movieobj);
 
             //reporters
@@ -108,35 +103,27 @@ class DirectorDashBoard extends Component {
            {
 
            }*/
-        }
+        //}
         //console.log(movie);
       }
-      this.setState({yourmovies:array});
-      //console.log(array);
+      this.setState({moviehashes:array});
     }
+   // this.setState({moviehashes:[{"title":"ABCD","icon":"https://ipfs.io/ipfs/QmWRZBfJUC3648KRYH7RLCbnGTTZi7G1VgubzwWXDdYTAP","id":1,"link":"abcd"},{"title":"ABCD","icon":"https://ipfs.io/ipfs/QmWRZBfJUC3648KRYH7RLCbnGTTZi7G1VgubzwWXDdYTAP","id":1,"link":"abcd"},{"title":"ABCD","icon":"https://ipfs.io/ipfs/QmWRZBfJUC3648KRYH7RLCbnGTTZi7G1VgubzwWXDdYTAP","id":1,"link":"abcd"},{"title":"ABCD","icon":"https://ipfs.io/ipfs/QmWRZBfJUC3648KRYH7RLCbnGTTZi7G1VgubzwWXDdYTAP","id":1,"link":"abcd"},{"title":"ABCD","icon":"https://ipfs.io/ipfs/QmWRZBfJUC3648KRYH7RLCbnGTTZi7G1VgubzwWXDdYTAP","id":1,"link":"abcd"}]});
     
+    console.log("abcd",this.state.moviehashes);
     
   }
   
+ 
+
 
   render() {
     return (
-     
-      <div>
-        
-        
-        <Navigation account ={this.state.account}/>
-        <Header title="Welcome" paragraph={this.state.account}/>
-        <Features data={this.state.yourmovies} />
-        
-        
-        
+      <div >
+        <VideoList data={this.state.moviehashes} />
       </div>
-     
-      
-        
     );
   }
 }
 
-export default DirectorDashBoard;
+export default Video2;

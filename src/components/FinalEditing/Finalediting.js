@@ -5,6 +5,7 @@ import React, {
   //import Select from 'react-select';
   import PiratesCatcher from '../../abis/PiratesCatcher.json';
   import Web3 from 'web3';
+
   import {
     Form,
     Modal,
@@ -20,6 +21,7 @@ import React, {
     Checkbox,
     Confirm
   } from 'semantic-ui-react';
+  var CryptoJS = require("crypto-js");
   //import {
     //DateInput
   //} from 'semantic-ui-calendar-react';
@@ -42,7 +44,7 @@ import React, {
         
       };
       this.captureFile = this.captureFile.bind(this);
-      this.getFile = this.getFile.bind(this);
+      //this.getFile = this.getFile.bind(this);
     }
   
     async componentDidMount()
@@ -111,9 +113,9 @@ import React, {
     
     
     //handleClose = () => this.setState({ modalOpen: false })
-    getFile=(filePath)=> {
-        return filePath.substr(filePath.lastIndexOf('\\') + 1).split('.')[0];
-    }
+   // getFile=(filePath)=> {
+    //    return filePath.substr(filePath.lastIndexOf('\\') + 1).split('.')[0];
+    //}
    captureFile=(event)=>{
        
        const inputfile=document.forms["siaupload"]["inputfile"].value;
@@ -132,25 +134,7 @@ import React, {
 
    async uploadVideo(event) {
      event.preventDefault();
-    try {
-
-      // create a client
-      const client = new SkynetClient();
-      // upload
-
-      var file=new File([""],'data.txt');
-      console.log(file);
-      //const skylink = await client.uploadFile(file);
-    //console.log(`Upload successful, skylink: ${skylink}`);
-      const skylink = await client.uploadFile(file);
-      console.log(`Upload successful, skylink: ${skylink}`);
-  
-      // download
-      //await client.downloadFile(skylink);
-      //console.log('Download successful');
-    } catch (error) {
-      console.log(error)
-    }
+     window.open('https://siasky.net/fADnoOZUU9p85lGGvH_9QISllo85B8khd-2Go1TaiDSjUA/');
   }
 
   
@@ -179,7 +163,12 @@ import React, {
         //alert(this.state.id);
         //alert(this.state.coreidea);
         //alert(this.state.producer);
-        await this.state.piratescatcher.methods.finalediting((this.state.id),(this.state.siahash).toString()).send({
+        var siahash=localStorage.getItem('hash');
+        console.log(siahash);
+        var bytes  = CryptoJS.AES.decrypt(siahash, 'secret');
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        console.log(originalText);
+        await this.state.piratescatcher.methods.finalediting((this.state.id),(originalText).toString()).send({
           from: this.state.account
         });
   
@@ -266,7 +255,7 @@ import React, {
 
         <br/>
         <form name="siaupload">
-       <input type="file" name="inputfile" onChange={this.captureFile}/>
+       
        <br/>
        <input type="button" name='Upload' value='Upload' className="btn btn-primary" onClick={this.uploadVideo}></input>
        </form>
@@ -284,7 +273,7 @@ import React, {
           this.state.loading
         }
         disabled = {
-          this.state.id=='' || this.state.siahash=='' 
+          this.state.id==''
         }
         primary onClick = {
           this.handleconf

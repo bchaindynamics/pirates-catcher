@@ -32,9 +32,13 @@ header {
     margin: 0;
 }*/
 
+video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
 video {
-    min-width: 90vw;
-    min-height: 90vh;
+    min-width: 110vw;
+    min-height: 110vh;
     object-fit: cover;
 }
 

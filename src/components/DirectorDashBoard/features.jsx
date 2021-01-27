@@ -14,7 +14,7 @@ export class features extends Component {
                   <div  key={`${d.title}-${i}`} className="col-xs-6 col-md-3">
                     {" "}
                     <img src={d.icon} height="280px" width="280px"></img>
-                    <h3>{d.title}</h3>
+                    <h3>{d.id}.{ }{d.title}</h3>
                     
                   </div>
                 ))

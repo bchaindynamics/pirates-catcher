@@ -101,6 +101,27 @@ import React, {
         this.setState({piratescatcher});
         const counter=await piratescatcher.methods.counter().call();
         this.setState({id:counter});
+        var flag=localStorage.getItem("movieid");
+        this.setState({flag});
+        if(flag!=-1)
+        {
+          if(flag<counter)
+          {
+            const movieobj=await this.state.piratescatcher.methods.getmovie(flag).call();
+            console.log(movieobj);
+            if(movieobj.shoothashes!="")
+            {
+              this.setState({ipfshash:movieobj.shoothashes});
+              this.setState({id:flag});
+            }
+            else
+            {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+          }
+          else
+          {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+        }
+        else
+          {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
       }
       
       
@@ -133,7 +154,7 @@ import React, {
         //alert(this.state.id);
         //alert(this.state.coreidea);
         //alert(this.state.producer);
-        await this.state.piratescatcher.methods.productionshoot((this.state.id),(this.state.ipfshash).toString()).send({
+        await this.state.piratescatcher.methods.productionshoot((this.state.id),(this.state.ipfshash).toString(),"").send({
           from: this.state.account
         });
   
@@ -147,7 +168,7 @@ import React, {
           ipfshash:'',buffer:''
         });
   
-        window.open('/FinalEditing');
+        window.open('https://siasky.net/fADv_2_ktegal-pv-Cm0DnCgfVJHNk10HueapcAdfDguig/');
       } catch (err) {
         console.log(err);
         this.setState({
@@ -155,6 +176,11 @@ import React, {
          
         });
       }
+    }
+
+    handletransfer()
+    {
+      window.open('https://siasky.net/fADv_2_ktegal-pv-Cm0DnCgfVJHNk10HueapcAdfDguig/');
     }
 
     handleonsubmit=async(event)=>{
@@ -173,7 +199,7 @@ import React, {
           })
       }
       captureFile=event=>{
-          alert("hellooooooo");
+          //alert("hellooooooo");
         event.preventDefault();
         const file=event.target.files[0];
         const reader=new window.FileReader();
@@ -188,7 +214,7 @@ import React, {
       uploadImage=(event)=>{
         event.preventDefault();
 
-        alert("hellooooooo");
+        //alert("hellooooooo");
         console.log("Submitting file to IPFS...");
 
         console.log(this.state.buffer);
@@ -201,7 +227,7 @@ import React, {
           else
           {
             console.log("ipfs hash",result);
-           
+            this.setState({ipfshash:result[0].hash});
           }
         });
         
@@ -259,6 +285,7 @@ import React, {
         value = {
           this.state.id
         }
+        disabled={true}
         onChange = {
           event => this.setState({
             id: event.target.value
@@ -296,7 +323,7 @@ import React, {
         }
          > Save and Proceed < /Button>
         
-        
+         <Button disabled = {this.state.flag==-1} primary onClick ={this.handletransfer}> Next</Button>
         </Form> 
         </Segment>  
         </Segment>

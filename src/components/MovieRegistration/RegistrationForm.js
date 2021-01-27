@@ -36,6 +36,7 @@ export default class RegistrationForm extends Component {
       writer:'',
       language:'',
       country:'',
+      flag:-1,
       piratescatcher:null
      
       
@@ -79,7 +80,9 @@ export default class RegistrationForm extends Component {
 
   async loadBlockchainData()
   {
-    console.log("props",this.props.location.state.id);
+
+    
+
     const web3=window.web3;
     const accounts=await web3.eth.getAccounts();
     //var paccount = accounts[0];
@@ -87,7 +90,7 @@ export default class RegistrationForm extends Component {
     this.setState({account:accounts[0]});
     window.ethereum.on('accountsChanged', function (accounts) {
       // Time to reload your interface with accounts[0]!
-      alert("accoun changed")
+      alert("Account changed");
       this.setState({account:accounts[0]});
     }.bind(this));
 
@@ -101,8 +104,57 @@ export default class RegistrationForm extends Component {
       const piratescatcher=new web3.eth.Contract(PiratesCatcher.abi,networkdata.address);
       console.log(piratescatcher);
       this.setState({piratescatcher});
-      const counter=await piratescatcher.methods.counter().call();
-      this.setState({id:counter});
+      var counter=await this.state.piratescatcher.methods.counter().call();
+      console.log("counter=",counter);
+      
+      console.log("props",localStorage.getItem("movieid"));
+      var flag=localStorage.getItem("movieid");
+      this.setState({flag});
+      if(flag!=-1)
+      {
+        //Already Registered
+        //alert(flag);
+        if(flag<counter)
+        {
+          const movieobj=await this.state.piratescatcher.methods.getmovie(flag).call();
+          console.log(movieobj);
+          if(movieobj.directoraddress===this.state.account)
+          {
+          if(movieobj.name!=="")
+          this.setState({name:movieobj.name});
+          if(movieobj.genre!=="")
+          this.setState({genre:movieobj.genre});
+          if(movieobj.director!=="")
+          this.setState({director:movieobj.director});
+          if(movieobj.writer!=="")
+          this.setState({writer:movieobj.writer});
+          if(movieobj.language!=="")
+          this.setState({language:movieobj.language});
+          if(movieobj.country!=="")
+          this.setState({country:movieobj.country});
+          this.setState({id:flag});
+          }
+          else
+          {
+            alert("It is not your movie");
+            localStorage.setItem("movieid",-1);
+          window.close();
+          }
+        }
+        else
+        {
+          alert("Invalid Movie Id");
+          
+          localStorage.setItem("movieid",-1);
+          window.close();
+        }
+      
+      }
+      else
+      {alert(`Remember,Your Movie Id is ${counter.toString()}`);
+        this.setState({id:counter});
+      }
+      
     }
     
     
@@ -113,8 +165,10 @@ export default class RegistrationForm extends Component {
   
   
   handleconf = async (event) => {
+
+
     event.preventDefault();
-   
+    
     //console.log(parseInt(this.state.quant)+10);
     //console.log(this.state.id + this.state.toc + this.state.fromc + this.state.fno+this.state.tno+this.state.date+this.state.defcheck+this.state.emailid);
     try {
@@ -130,7 +184,7 @@ export default class RegistrationForm extends Component {
       //await trackpass.methods.storegold(reacth,(this.state.id).toString(),(this.state.quant).toString(),(this.state.toc).toString(),(this.state.fromc).toString(),(this.state.expl).toString(),parseInt(this.state.billamt)).send({
         //from: accounts[0]
       //});
-      
+      localStorage.setItem("nextid",this.state.id);
       await this.state.piratescatcher.methods.register((this.state.name).toString(),(this.state.director).toString(),(this.state.writer).toString(),(this.state.genre).toString(),(this.state.language).toString(),(this.state.country).toString()).send({
         from: this.state.account
       });
@@ -157,6 +211,10 @@ export default class RegistrationForm extends Component {
         loading: false
       });
     }
+  }
+  handletransfer()
+  {
+    window.open('/Ideation');
   }
   
   
@@ -385,6 +443,8 @@ onChange = {
         this.handleconf
       }
        > Save and Proceed < /Button>
+
+       <Button disabled = {this.state.flag==-1} primary onClick={this.handletransfer} > Next</Button>
       
       
       </Form> 

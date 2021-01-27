@@ -33,7 +33,8 @@ import React, {
         cast:'',
         budget:'',
         shootlocation:'',
-        piratescatcher:null
+        piratescatcher:null,
+        flag:-1
         
       };
      
@@ -82,7 +83,7 @@ import React, {
       this.setState({account:accounts[0]});
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
-        alert("accoun changed")
+        alert("Account changed")
         this.setState({account:accounts[0]});
       }.bind(this));
   
@@ -96,12 +97,48 @@ import React, {
         const piratescatcher=new web3.eth.Contract(PiratesCatcher.abi,networkdata.address);
         console.log(piratescatcher);
         this.setState({piratescatcher});
-        const counter=await piratescatcher.methods.counter().call();
-        this.setState({id:counter});
+        const counter=await this.state.piratescatcher.methods.counter().call();
+        var flag=localStorage.getItem("movieid");
+        this.setState({flag});
+        if(flag!=-1)
+        {
+          if(flag<counter)
+          {
+            const movieobj=await this.state.piratescatcher.methods.getmovie(flag).call();
+            console.log(movieobj);
+            if(movieobj.cast!="")
+            {
+              this.setState({cast:movieobj.cast});
+              if(movieobj.budget!="")
+              {
+                this.setState({budget:movieobj.budget});
+                if(movieobj.shootlocation!="")
+                {
+                    this.setState({shootlocation:movieobj.shootlocation});
+                    this.setState({id:flag});
+                }
+              }
+            }
+            else
+          {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+
+          }
+          else
+          {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+        }
+        else
+        {
+          this.setState({id:localStorage.getItem("nextid")});
+        }
       }
       
       
     }
+
+    handletransfer()
+  {
+    window.open('/Production');
+  }
     
     
     //handleClose = () => this.setState({ modalOpen: false })
@@ -207,6 +244,7 @@ import React, {
         value = {
           this.state.id
         }
+        disabled={true}
         onChange = {
           event => this.setState({
             id: event.target.value
@@ -309,7 +347,7 @@ import React, {
           this.handleconf
         }
          > Save and Proceed < /Button>
-        
+         <Button disabled = {this.state.flag==-1} primary onClick ={this.handletransfer}> Next</Button>
         
         </Form> 
         </Segment>  

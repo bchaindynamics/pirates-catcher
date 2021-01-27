@@ -28,18 +28,28 @@ export class Navigation extends Component {
             id="bs-example-navbar-collapse-1"
           >
             <ul className="nav navbar-nav navbar-right">
+            
               <li>
                 <a href="#features" className="page-scroll">
                   Features
                 </a>
               </li>
+
               <li>
                 <a href="#about" className="page-scroll">
                   About
                 </a>
               </li>
-              
-              
+              <li>
+                <a href="#services" className="page-scroll">
+                  Report a Movie
+                </a>
+              </li>
+              <li>
+                <a href="#testimonials" className="page-scroll">
+                  Check Reporters
+                </a>
+              </li>
              
               
               <li>

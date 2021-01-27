@@ -32,8 +32,8 @@ import React, {
         id:0,
         coreidea:'',
         producer:'',
-        piratescatcher:null
-        
+        piratescatcher:null,
+        flag:-1
       };
      
     }
@@ -81,7 +81,7 @@ import React, {
       this.setState({account:accounts[0]});
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
-        alert("accoun changed")
+        alert("account changed");
         this.setState({account:accounts[0]});
       }.bind(this));
   
@@ -95,8 +95,37 @@ import React, {
         const piratescatcher=new web3.eth.Contract(PiratesCatcher.abi,networkdata.address);
         console.log(piratescatcher);
         this.setState({piratescatcher});
-        const counter=await piratescatcher.methods.counter().call();
-        this.setState({id:counter});
+        const counter=await this.state.piratescatcher.methods.counter().call();
+        var flag=localStorage.getItem("movieid");
+        this.setState({flag});
+        if(flag!=-1)
+        {
+          if(flag<counter)
+        {
+          const movieobj=await this.state.piratescatcher.methods.getmovie(flag).call();
+          console.log(movieobj);
+          if(movieobj.coreidea!=="")
+          {
+            this.setState({coreidea:movieobj.coreidea});
+            if(movieobj.producer!=="")
+            {
+              this.setState({producer:movieobj.producer});
+              this.setState({id:flag});
+            }
+            
+          }
+          else
+          {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+          
+          
+        }
+        else
+        {localStorage.setItem("movieid",-1);this.setState({id:localStorage.getItem("nextid")});}
+          
+        }
+        else
+      {this.setState({id:localStorage.getItem("nextid")});}
+
       }
       
       
@@ -129,9 +158,10 @@ import React, {
         //alert(this.state.id);
         //alert(this.state.coreidea);
         //alert(this.state.producer);
-       // await this.state.piratescatcher.methods.ideation((this.state.id),(this.state.coreidea).toString(),(this.state.producer).toString()).send({
-        //  from: this.state.account
-       // });
+        localStorage.setItem("nextid",this.state.id);
+        await this.state.piratescatcher.methods.ideation((this.state.id),(this.state.coreidea).toString(),(this.state.producer).toString()).send({
+          from: this.state.account
+        });
   
        
         
@@ -153,6 +183,11 @@ import React, {
         });
       }
     }
+
+    handletransfer()
+  {
+    window.open('/Preproduction');
+  }
     
     
     handleChange = (event, {
@@ -210,7 +245,7 @@ import React, {
             id: event.target.value
           })
         }
-  
+        disabled={true}
         
         /> 
         </Form.Field>
@@ -285,6 +320,8 @@ import React, {
           this.handleconf
         }
          > Save and Proceed < /Button>
+
+         <Button disabled = {this.state.flag==-1} primary onClick ={this.handletransfer}> Next</Button>
         
         
         </Form> 

@@ -21,16 +21,16 @@ export class Header extends Component {
                   <form>
                     
                   <button
-                    onClick={() => window.open('/Video')}
+                    onClick={() => window.open('/Video2')}
                     className="btn btn-custom btn-lg page-scroll"
                   >
-                    Start Playing
+                    Stream a Movie
                   </button>{" "}
                   <button
                     onClick={() => window.open('/Director')}
                     className="btn btn-custom btn-lg page-scroll"
                   >
-                    Director Login
+                    Register a Movie
                   </button>{" "}
                   
                   
