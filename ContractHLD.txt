@@ -1,0 +1,57 @@
+pragma solidity ^0.5.0;
+contract PiratesCatcher
+{
+    struct Movie
+    {
+        string id;
+        string name;
+        string director;
+        string writer;
+        string genre;
+        string language;
+        string country;
+        string coreidea;
+        string producer;
+        string cast;
+        string budget;
+        string shootlocation;
+        string shoothashes;//images taken during shoot also encrypted offchain.
+        string siahash;//after uploading complete movie and will be encrypted offchain.
+        string shootdate;//event performed or image uploaded on particular day. 
+    }  
+    mapping(string=>Movie) movies;
+    event RegistrationDone(string id,string name,string director,string writer,string genre,string language,string country);
+    event IdeationDone(string coreidea,string producer);
+    event Preproduction(string cast,string budget,string shootlocation);
+    event Production(string shoothash,string shootdate);
+    event FinalEditingDone(string siahash);
+    event PirateReported(address piratecinema,address reporter);
+    function register(string memory id,string memory name,string memory director,string memory writer,string memory genre,string memory language,string memory country) public
+    {
+        //Movie registration Done
+    }
+    function ideation(string memory id,string memory coreidea,string memory producer) public
+    {
+       //Movie Ideation Done
+    }
+    function preproduction(string memory id,string memory cast,string memory budget,string memory shootlocation)public
+    {
+        //Movie Preproduction done
+    }
+    function productionshoot(string memory id,string memory ipfshashes,string memory shootdate)public 
+    {
+        //Movie Production done
+    }
+    function finalediting(string memory id,string memory siahash)public 
+    {
+        //Movie finalediting done
+    }
+    function get(string memory id)public view returns(Movie memory)
+    {
+        //Return complete movie structure by giving id.
+    }
+    function reporterbounty(address payable piratecinema,address payable reporter)public payable
+    {
+        //Credit bounty to pirate reporter.
+    }
+}
